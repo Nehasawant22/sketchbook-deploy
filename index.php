@@ -289,102 +289,63 @@
     			 </div>
     		   </div>
     			<div class="col-md-4">
-          	<?php
-          	 //index.php
-               $error = '';
-            	 $name = '';
-            	 $email = '';
+					<?php
+						$servername = "localhost";
+						$username = "root";
+						$password = "";
+						$dbname = "sketch";
+						// Create connection
+						$conn = new mysqli($servername, $username, $password, $dbname);
+						// Check connection
+						if ($conn->connect_error) {
+							die("Connection failed: " . $conn->connect_error);
+						}
+						if(isset($_POST['submit'])){
+							$name=$_POST['name'];
+							$email=$_POST['email'];
+							$message=$_POST['message'];
 
-            	 $message = '';
+						if(!empty($name)&&!empty($email)&&!empty($message)){
+						$sql="insert into usr(name,email,message)values('$name','$email','$message')";
+						}
 
-            	 function clean_text($string)
-            	 {
-            	  $string = trim($string);
-            	  $string = stripslashes($string);
-            	  $string = htmlspecialchars($string);
-            	  return $string;
-            	 }
+						if ($conn->query($sql) === TRUE) {
+							echo "<script>alert('thank you');</script>";
 
-            	 if(isset($_POST["submit"]))
-            	 {
-            	  if(empty($_POST["name"]))
-            	  {
-            	   $error .= '<p><label class="text-danger">Please Enter your Name</label></p>';
-            	  }
-            	  else
-            	  {
-            	   $name = clean_text($_POST["name"]);
-            	   if(!preg_match("/^[a-zA-Z ]*$/",$name))
-            	   {
-            		     $error .= '<p><label class="text-danger">Only letters and white space allowed</label></p>';
-            	   }
-            	  }
-            	  if(empty($_POST["email"]))
-            	  {
-            	     $error .= '<p><label class="text-danger">Please Enter your Email</label></p>';
-            	  }
-            	  else
-            	  {
-              	   $email = clean_text($_POST["email"]);
-              	  if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-              	  {
-              		    $error .= '<p><label class="text-danger">Invalid email format</label></p>';
-              	  }
-            	  }
+							}
+						else {
+							echo "Error: " . $sql . "<br>" . $conn->error;
+						}
+						}
 
-            	  if(empty($_POST["message"]))
-            	  {
-            	     $error .= '<p><label class="text-danger">Message is required</label></p>';
-            	  }
-            	  else
-            	  {
-            	     $message = clean_text($_POST["message"]);
-            	  }
+					?>
+					<script>
+						$(document).ready(function(){
+						  $("form").submit(function(){
+							alert("Thank you for your feedback.");
+						  });
+						});
+					</script>
+					<form method="post">
 
-            	  if($error == '')
-              	  {
-              	   $file_open = fopen("contact_data.csv", "a");
-              	   $no_rows = count(file("contact_data.csv"));
-              	   if($no_rows > 1)
-              	   {
-              		$no_rows = ($no_rows - 1) + 1;
-              	   }
-              	   $form_data = array(
-              		'sr_no'  => $no_rows,
-              		'name'  => $name,
-              		'email'  => $email,
+					  <div class="form-group">
+						<h4>Feedback form</h4>
+						<label>Enter Name</label>
+						<input type="text" name="name" placeholder="Enter Name" class="form-control" required />
+					  </div>
+					  <div class="form-group">
+					   <label for="email">Enter Email</label>
+					   <input type="email" name="email" class="form-control" placeholder="Enter Email" required />
+					  </div>
 
-              		'message' => $message
-              	   );
-              	   fputcsv($file_open, $form_data);
-              	   $error = '<label class="text-success">Thank for your feedback</label>';
-              	   $name = '';
-              	   $email = '';
-
-              	   $message = '';
-              	  }
-            	 }
-          	 ?>
-          	 <form method="post">
-            		  <?php echo $error; ?>
-            		  <div class="form-group">
-            			     <h4>Feedback form</h4>
-            		       <label>Enter Name</label>
-            		       <input type="text" name="name" placeholder="Enter Name" class="form-control" value="<?php echo $name; ?>" />
-            		  </div>
-            		  <div class="form-group">
-              		  <label>Enter Email</label>
-              		  <input type="text" name="email" class="form-control" placeholder="Enter Email" value="<?php echo $email; ?>" />
-            		  </div>
-
-            		  <div class="form-group">
-              		   <label>Write your feedback here</label>
-              		   <textarea name="message" class="form-control" placeholder="Enter Message"><?php echo $message; ?></textarea>
-              		</div>
-            		  <div class="form-group" align="center">
-            		      <input type="submit" name="submit" class="btn btn-info" value="Submit" />
-            		  </div>
-          		</form>
+					  <div class="form-group">
+					   <label>Write your feedback here</label>
+					   <textarea name="message" class="form-control" placeholder="Enter Message" required></textarea>
+					  </div>
+					  <div class="form-group" align="center">
+					   <input type="submit" name="submit" class="btn btn-info" value="Submit" />
+					  </div>
+				    </form>
           	</div>
       	</div>
   		  <div class="row">
